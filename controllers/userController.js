@@ -84,6 +84,7 @@ exports.createUser =  catchAsyncError(async (req, res, next) => {
 
 });
 
+
 //Get User Details
 
 exports.getUserDetails =  catchAsyncError(async(req,res,next)=>{
@@ -96,8 +97,33 @@ exports.getUserDetails =  catchAsyncError(async(req,res,next)=>{
   });
 })
 
+ // Get all users (admin)
+ exports.getAllUser = catchAsyncError(async(req,res,next)=>{
+  const users = await User.find();
 
-//Update User
+  res.status(200).json({
+      success: true,
+      users,
+  });
+});
+
+// Get single users -- Admin
+exports.getSingleUser = catchAsyncError(async(req,res,next)=>{
+  const user = await User.findById(req.params.id);
+
+  if(!user){
+      return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`)
+      );
+  }
+
+  res.status(200).json({
+      success: true,
+      user,
+  });
+});
+
+
+//Update User -- Admin
 exports.updateUser = catchAsyncError(async(req, res, next) => {
   const newUserData={
     name:req.body.name,
@@ -119,7 +145,7 @@ exports.updateUser = catchAsyncError(async(req, res, next) => {
 
 })
 
-//Delete User
+//Delete User -- Admin
 exports.deleteUser =  catchAsyncError(async(req,res,next)=>{
  
   const user = await User.findById(req.params.id);
